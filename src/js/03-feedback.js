@@ -8,12 +8,13 @@ const refs = {
     input: document.querySelector('input'),
 }
 
-const inputInformation = {
+let inputInformation = {
     email: '',
     message: '',
 }
 
 refs.form.addEventListener('submit', onFormSubmit)
+refs.form.addEventListener('input', throttle(onTextareaInput, 500))
 
 inputSavedText()
 
@@ -25,23 +26,20 @@ function onFormSubmit(evt) {
     localStorage.removeItem(localhostKey)
 }
 
-refs.form.addEventListener('input', throttle(onTextareaInput, 500))
+
 
 function onTextareaInput(evt) {
-
     inputInformation[evt.target.name] = evt.target.value
-
-    const targetValue = JSON.stringify(inputInformation)
-    localStorage.setItem(localhostKey, targetValue)
+    localStorage.setItem(localhostKey, JSON.stringify(inputInformation))
 }
  
 function inputSavedText() {
     const savedMessage = localStorage.getItem(localhostKey)
     if (savedMessage) {
         console.log(savedMessage);
-        const infoObj = JSON.parse(savedMessage)
-        refs.textarea.value = infoObj.massage || '';
-        refs.input.value = infoObj.email || '';
+        inputInformation = JSON.parse(localStorage.getItem(localhostKey))
+        refs.textarea.value = inputInformation.message || '';
+        refs.input.value = inputInformation.email || '';
     }
 }
 
